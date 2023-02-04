@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends
-
+from typing import List, Optional
 from . import basemodel, schemas
 from .db_connection import engine, SessionLocal, Session, get_db
 
@@ -14,31 +14,31 @@ async def root():
     return {'message': 'Welcome to my API server'}
 
 
-@app.get('/posts', status_code=status.HTTP_200_OK)
+@app.get('/posts')
 def get_posts(datab: Session = Depends(get_db)):
     posts = datab.query(basemodel.Post).all()
 
-    return {'data': posts}
+    return posts
 
 
-@app.post('/posts', status_code=status.HTTP_201_CREATED)
-def create_post(n_post: schemas.CreatePost, datab: Session = Depends(get_db)):
+@app.post('/posts', status_code=status.HTTP_201_CREATED, response_model=schemas.PostCreate)
+def create_post(n_post: schemas.PostCreate, datab: Session = Depends(get_db)):
     new_post = basemodel.Post(**n_post.dict())
     datab.add(new_post)  # add the new post
     datab.commit()  # push the new changes into database
     datab.refresh(new_post)  # returning post from database
 
-    return {'data': new_post}
+    return new_post
 
 
-@app.get('/posts/{get_id}', status_code=status.HTTP_200_OK)
+@app.get('/posts/{get_id}', response_model=schemas.GetPost)
 def get_post(get_id: int, datab: Session = Depends(get_db)):
     post = datab.query(basemodel.Post).filter(basemodel.Post.id == get_id).first()
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             detail=f"post with {get_id} doesn't exist.")
 
-    return {'data': post}
+    return post
 
 
 @app.delete('/posts/{delete_id}', status_code=status.HTTP_204_NO_CONTENT)
@@ -50,11 +50,12 @@ def delete_post(delete_id: int, datab: Session = Depends(get_db)):
     deleted_post.delete(synchronize_session=False)
     datab.commit()  # push the new changes into database
 
-    return {'data': deleted_post}
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@app.put('/posts/{update_id}', status_code=status.HTTP_200_OK)
-def update_post(update_id: int, post: schemas.PostDefault , datab: Session = Depends(get_db)):
+@app.put('/posts/{update_id}')
+def update_post(update_id: int, post: schemas.PostCreate, datab: Session = Depends(get_db)):
+
     post_query = datab.query(basemodel.Post).filter(basemodel.Post.id == update_id)
     updated_post = post_query.first()
     if updated_post is None:
@@ -63,6 +64,6 @@ def update_post(update_id: int, post: schemas.PostDefault , datab: Session = Dep
     post_query.update(post.dict(), synchronize_session=False)
     datab.commit()  # push the new changes into database
 
-    return {'data': post_query.first()}
+    return post_query.first()
 
 

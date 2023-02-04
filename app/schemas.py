@@ -1,32 +1,64 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from typing import Optional
+
+from pydantic.types import conint
 
 
-class PostDefault(BaseModel):  # default post get dictionary
+# ////////////////////////////////
+class PostBase(BaseModel):
     title: str
     content: str
     published: bool = True
 
 
-class CreatePost(PostDefault):  # default post create dictionary
-    pass
-
-
-class Post(PostDefault):  # default post update dictionary
-    id: int
+# ////////////////////////////////
+class GetPost(PostBase):
+    # id: int
+    created_time: datetime
 
     class Config:
         orm_mode = True
 
 
-class PostReturn(PostDefault):
-    id: int
-    created_time: datetime
+# ////////////////////////////////
+class PostCreate(PostBase):
+    pass
 
-    class Config:  # ignore if not dictionary
+    class Config:
+        orm_mode = True
+
+
+# ////////////////////////////////
+class PostUpdate(PostBase):
+    pass
+
+
+class UserOut(BaseModel):
+    id: int
+    email: EmailStr
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class Post(PostBase):
+    id: int
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class PostOut(BaseModel):
+    Post: Post
+    votes: int
+
+    class Config:
         orm_mode = True
 
 
 class UserCreate(BaseModel):
-    mail: EmailStr
+    email: EmailStr
     password: str
