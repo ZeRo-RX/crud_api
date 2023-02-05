@@ -15,12 +15,12 @@ class Post(Base):
     created_time = Column(DateTime(timezone=True), nullable=False, default=func.now())
 
 
-# class User(Base):
-#     __tablename__ = 'users'
-#
-#     id = Column(Integer, primary_key=True, nullable=False)
-#     mail = Column(String, nullable=False, unique=True)
-#     password = Column(String, nullable=False)
-#     created_time = Column(DateTime(timezone=True), nullable=False, default=func.now())
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    mail = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
+    created_time = Column(DateTime(timezone=True), nullable=False, default=func.now())
 
 

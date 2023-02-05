@@ -1,0 +1,16 @@
+Index: app/main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/main.py b/app/main.py
+--- a/app/main.py	
++++ b/app/main.py	(date 1675487919491)
+@@ -64,6 +64,6 @@
+     post_query.update(post.dict(), synchronize_session=False)
+     datab.commit()  # push the new changes into database
+ 
+-    return post_query.update(updated_post.dict(), synchronize_session=False)
++    return post_query.first()
+ 
+ 

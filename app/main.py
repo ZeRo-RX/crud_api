@@ -3,6 +3,7 @@ from typing import List, Optional
 from . import basemodel, schemas
 from .db_connection import engine, SessionLocal, Session, get_db
 
+
 basemodel.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -10,11 +11,10 @@ app = FastAPI()
 
 @app.get('/', status_code=status.HTTP_200_OK)
 async def root():
-
     return {'message': 'Welcome to my API server'}
 
 
-@app.get('/posts')
+@app.get('/posts', status_code=status.HTTP_200_OK, response_model=List[schemas.GetPost])
 def get_posts(datab: Session = Depends(get_db)):
     posts = datab.query(basemodel.Post).all()
 
@@ -55,7 +55,6 @@ def delete_post(delete_id: int, datab: Session = Depends(get_db)):
 
 @app.put('/posts/{update_id}')
 def update_post(update_id: int, post: schemas.PostCreate, datab: Session = Depends(get_db)):
-
     post_query = datab.query(basemodel.Post).filter(basemodel.Post.id == update_id)
     updated_post = post_query.first()
     if updated_post is None:
@@ -67,3 +66,19 @@ def update_post(update_id: int, post: schemas.PostCreate, datab: Session = Depen
     return post_query.first()
 
 
+# //////////////////////////////// User Side ////////////////////////////////
+@app.get('/users', status_code=status.HTTP_200_OK, response_model=List[schemas.GetUser])
+def get_posts(datab: Session = Depends(get_db)):
+    users = datab.query(basemodel.User).all()
+
+    return users
+
+
+@app.post('/users', status_code=status.HTTP_201_CREATED, response_model=schemas.GetUser)
+def create_post(n_user: schemas.UserCreate, datab: Session = Depends(get_db)):
+    new_user = basemodel.User(**n_user.dict())
+    datab.add(new_user)
+    datab.commit()
+    datab.refresh(new_user)
+
+    return new_user
