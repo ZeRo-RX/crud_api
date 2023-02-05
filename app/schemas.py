@@ -13,7 +13,7 @@ class PostBase(BaseModel):
 
 
 class GetPost(PostBase):
-    # id: int
+    id: int
     created_time: datetime
 
     class Config:

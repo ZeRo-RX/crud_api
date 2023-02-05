@@ -1,0 +1,17 @@
+Index: app/main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/main.py b/app/main.py
+--- a/app/main.py	
++++ b/app/main.py	(date 1675562255092)
+@@ -67,7 +67,7 @@
+ 
+ 
+ # //////////////////////////////// User Side ////////////////////////////////
+-@app.get('/users', status_code=status.HTTP_200_OK)
++@app.get('/users', status_code=status.HTTP_200_OK, response_model=List[schemas.GetUser])
+ def get_posts(datab: Session = Depends(get_db)):
+     users = datab.query(basemodel.User).all()
+ 
