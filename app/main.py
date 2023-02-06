@@ -2,6 +2,9 @@ from fastapi import FastAPI, Response, status, HTTPException, Depends
 from typing import List, Optional
 from . import basemodel, schemas
 from .db_connection import engine, SessionLocal, Session, get_db
+from passlib.context import CryptContext
+
+password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 basemodel.Base.metadata.create_all(bind=engine)
 
@@ -75,6 +78,10 @@ def get_all_users(datab: Session = Depends(get_db)):
 
 @app.post('/users', status_code=status.HTTP_201_CREATED, response_model=schemas.GetUser)
 def create_user(n_user: schemas.UserCreate, datab: Session = Depends(get_db)):
+    # hashing password:
+    hashed_password = password_context.hash(n_user.password)
+    n_user.password = hashed_password
+    # create the user
     new_user = basemodel.User(**n_user.dict())
     datab.add(new_user)
     datab.commit()
