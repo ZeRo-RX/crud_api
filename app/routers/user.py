@@ -6,7 +6,7 @@ from ..utility import hash_password
 
 router = APIRouter(
     prefix="/users",
-    tags=["users"]
+    tags=["Users"]
 )
 
 

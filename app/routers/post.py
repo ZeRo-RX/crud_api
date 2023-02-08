@@ -5,7 +5,7 @@ from ..db_connection import Session, get_db
 
 router = APIRouter(
     prefix="/posts",
-    tags=["posts"]
+    tags=["Posts"]
 )
 
 
@@ -50,7 +50,7 @@ def delete_post(post_id: int, datab: Session = Depends(get_db)):
 
 @router.put('/{post_id}')
 def update_post(post_id: int, post: schemas.PostCreate, datab: Session = Depends(get_db)):
-    post_query = datab.query(basemodel.Post).filter(basemodel.Post.id == update_id)
+    post_query = datab.query(basemodel.Post).filter(basemodel.Post.id == post_id)
     updated_post = post_query.first()
     if updated_post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

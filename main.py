@@ -1,8 +1,3 @@
-log_in_page = '''
-type you
-"postgresql://<USERNAME>:<PASSWORD>@<HOST_or_IP>/<DATABASE_NAME>"
-'''
-
 while True:
     host_ip = input('Welcome to setup page\n\nEnter your Host IP: ')
     database_name = input('Enter your Database Name: ')
